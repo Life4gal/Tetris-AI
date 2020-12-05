@@ -3,7 +3,13 @@
 [The detailed introduction of the original project can be seen here](https://imake.ninja/el-tetris-an-improvement-on-pierre-dellacheries-algorithm/)
 
 ### This is a version implemented using python
-
+```shell
+# Run the game
+# Linux
+python3 main.py
+# Windows
+python main.py
+```
 
 ### Requirement 
 #### pygame
@@ -22,3 +28,5 @@ if Islam retains its rights to the original project, the Copyright is
 [Copyright Islam El-Ashi <islam@elashi.me>](https://github.com/ielashi/eltetris)
 
 Otherwise, the license of this project is the License file in the project
+
+## if you have any questions, just ask me
