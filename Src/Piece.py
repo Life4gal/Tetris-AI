@@ -1,15 +1,25 @@
+"""
+This file is about the implementation of the Tetris Piece
+
+DataFormat:
+    orientation:
+        In the current direction, the VALUE of each row of a piece from top to bottom, stored them in a list
+    width: width of this piece
+    height: height of this piece
+
+VALUE:
+    we use X BIT BINARY to store the state of current row
+    X is the COLUMNS of the game board
+
+    e.g.
+        X = 10, state is 1000011110
+        This means that there are blocks in the 0,5,6,7,8 columns, and the 1,2,3,4,9 columns are empty
+        and we store it as a decimal number 542
+"""
+
 import enum
 import typing
 import random
-
-"""
-Data storage method:
-    COLUMNS = 10    ROWS = 20
-    board: typing.List[int] size = 20(ROWS)
-    for every row, use 10(COLUMNS) BIT Binary number to store the total blocks in current row
-    
-    e.g. 1000011110 means there are 5 blocks in column 0,5,6,7,8, and we store it as a decimal number 542
-"""
 
 
 def bin_to_dec(binary: str) -> int:
