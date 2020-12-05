@@ -1,3 +1,7 @@
+"""
+This file is about the implementation of the Tetris Game(Actually there is nothing here)
+"""
+
 import typing
 
 
@@ -11,11 +15,14 @@ class Info:
             game_over: bool = False):
         """
         The information about what this action cause
-        :param landing_height: what is the current highest row
-        :param best_place_column: which column is the best place
-        :param best_orientation: the best orientation
-        :param row_removed: how many row had been removed in this action
-        :param game_over: is game over
+        There is some redundancy, not all functions need these variables, but it simplifies the implementation
+        :param landing_height:
+            The height where the piece is put
+            (= the height of the column + (the height of the piece / 2))
+        :param best_place_column: Which column is the best place
+        :param best_orientation: The best orientation to place
+        :param row_removed: The number of rows eliminated
+        :param game_over: Is game over
         """
         self.landing_height: int = landing_height
         self.column: int = best_place_column
@@ -25,6 +32,7 @@ class Info:
 
 
 class Tetris:
+    # In the case of the current number of columns, the value indicates that the row is full
     FULL_ROW_VALUE = 2 ** 10 - 1
 
     def __init__(self, columns: int, rows: int):
