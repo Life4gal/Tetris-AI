@@ -1,30 +1,10 @@
+"""
+This file is about the implementation of the AI
+"""
+
 import typing
 import Src.Game as Game
 import Src.Piece as Piece
-
-"""
-1. Treat the weights as *positions* in PSO.
-
-2. Randomize the velocities and positions at beginning of the algorithm.
-
-3. Use current weights to evaluate Tetris board.
-
-4. Continue playing the game until AI looses or reaches the maximum round.
-
-5. Count total number of eliminated rows.
-
-6. The global best position is updated if current weights lead to more rows eliminated. 
-And current weights will also be updated as a 'better position'.
-
-7. Apply PSO iteration to generate the next velocities and repeat the step 3 ~ 7 until 
-the maximum iteration time reaches.
-
-8. Every particle will play the game and get its own pBest in an iterative.
-
-9. Finally the swarm reaches the approximate global optimal position. This position is the optimal weights so far.
-
-the more rows are eliminated, the better weights are.
-"""
 
 
 class AI:
