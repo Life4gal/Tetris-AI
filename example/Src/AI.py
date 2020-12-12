@@ -3,8 +3,8 @@ This file is about the implementation of the AI
 """
 
 import typing
-import Src.Game as Game
-import Src.Piece as Piece
+import example.Src.Game as Game
+from example import Src as Piece
 
 
 class AI:
