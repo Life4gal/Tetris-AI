@@ -4,7 +4,7 @@
 
 ### This is a version implemented using python
 ```shell
-# Run the game
+# Run the AI
 # Linux
 python3 main.py
 # Windows

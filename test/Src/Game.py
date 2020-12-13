@@ -22,7 +22,7 @@ class Info:
         :param best_place_column: Which column is the best place
         :param best_orientation: The best orientation to place
         :param row_removed: The number of rows eliminated
-        :param game_over: Is game over
+        :param game_over: Is AI over
         """
         self.landing_height: int = landing_height
         self.column: int = best_place_column

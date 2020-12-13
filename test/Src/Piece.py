@@ -9,7 +9,7 @@ DataFormat:
 
 VALUE:
     we use X BIT BINARY to store the state of current row
-    X is the COLUMNS of the game board
+    X is the COLUMNS of the AI board
 
     e.g.
         X = 10, state is 1000011110
