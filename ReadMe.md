@@ -8,7 +8,7 @@
 # Linux
 python3 ExampleTetris/Game.py
 # Windows
-python main.pyExampleTetris/Game.py
+python ExampleTetris/Game.py
 ```
 
 ### Requirement 
@@ -24,14 +24,20 @@ python main.pyExampleTetris/Game.py
 #### Windows: Pass
 
 ## issues
-If it is not run in the IDE (mine is Pycharm), 
-it may become unresponsive or even crash 
+If it is not run in the IDE (mine is Pycharm), it may become unresponsive or even crash
 (it is reasonable, because we don't have to monitor any time, just simple while True)
 
 ## future
+
 ```text
 1.A set of universal conversion proxy interface, 
 so that any implementation of Tetris can be converted into an AI-recognizable form
 2.Allow AI to operate games built in any form.
 3.The game built by other language?
+```
+
+### Note
+
+```text
+USE THE TYPEs IN AI/StandardType TO PARSE YOUR DATA TO AI
 ```
