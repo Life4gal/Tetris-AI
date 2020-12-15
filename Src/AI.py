@@ -64,7 +64,10 @@ class AI:
 						best_orientation = orientation
 						best_column = column
 
-		return Info(best_orientation=piece.value[0] if len(best_orientation) == 0 else best_orientation, best_place_column=best_column)
+		return Info(
+			best_orientation=piece.value[0] if len(best_orientation) == 0 else best_orientation,
+			best_place_column=best_column
+		)
 
 	@staticmethod
 	def play_move(board: typing.List[int], orientation: typing.List[int], which_column: int) -> Info:

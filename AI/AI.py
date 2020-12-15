@@ -9,26 +9,32 @@ class AI:
 		self.__inited: bool = False
 
 	def set_tetris(self, tetris: StandardType.StandardTetris) -> None:
+		"""
+		Before playing the game, the user needs to initialize the AI,
+		which basically converts the user’s Tetris into a form that can be recognized by the AI,
+		and then hand it over to the AI
+		:param tetris:
+		:return:
+		"""
 		self.__tetris = tetris
 		self.__inited = True
 
 	def get_scores(self) -> int:
 		return self.__scores
 
-	def play(self, current_piece: StandardType.StandardPiece) -> bool:
+	def play(self, current_piece: StandardType.StandardPiece) -> StandardType.StandardMoveStateInfo:
 		assert self.__inited, f"Error: You should init the AI first!"
 
 		pick: StandardType.StandardMoveEvaluatedInfo = self.pick_move(current_piece)
-		do_it: StandardType.StandardGameStateInfo = \
+		do_it: StandardType.StandardMoveStateInfo = \
 			AI.do_move(self.__tetris.board, pick.best_orientation, pick.best_place_column)
 
 		if not do_it.is_game_over:
 			# if game not over, we can cast it to StandardMoveStateInfo safety
 			do_it.__class__ = StandardType.StandardMoveStateInfo
 			self.__scores += do_it.eliminated_rows
-			return True
-		else:
-			return False
+
+		return do_it
 
 	def pick_move(self, current_piece: StandardType.StandardPiece) -> StandardType.StandardMoveEvaluatedInfo:
 		"""
@@ -39,59 +45,61 @@ class AI:
 		:return: A Sign contained all information we need
 		"""
 		best_evaluation = -100000
-		best_orientation: StandardType.StandardOrientation = []
-		best_column = 0
+		best_orientation_data: StandardType.StandardOrientationData = []
+		best_place_column = 0
+		rotate_times = -1
 
 		# Evaluate all possible orientations
-		for this_shape in current_piece:
-			orientation = this_shape.orientation
+		for index, this_shape in enumerate(current_piece):
+			orientation_data = this_shape.data
 
 			# Evaluate all possible columns
 			for column in range(self.__tetris.number_of_columns - this_shape.width + 1):
 				# Copy current board
 				board = self.__tetris.board.copy()
-				move_info: StandardType.StandardGameStateInfo = AI.do_move(board, orientation, column)
+				move_info: StandardType.StandardMoveStateInfo = AI.do_move(board, orientation_data, column)
 
 				if not move_info.is_game_over:
-					# if game not over, we can cast it to StandardMoveStateInfo safety
-					move_info.__class__ = StandardType.StandardMoveStateInfo
 					evaluation = AI.evaluate_board_coefficient(move_info, board, self.__tetris.number_of_columns)
 
 					if evaluation > best_evaluation:
 						best_evaluation = evaluation
-						best_orientation = orientation
-						best_column = column
+						best_orientation_data = orientation_data
+						best_place_column = column
+
+						rotate_times = index
 
 			return StandardType.StandardMoveEvaluatedInfo(
-				current_piece[0] if len(best_orientation) == 0 else best_orientation,
-				best_column
+				current_piece[0] if len(best_orientation_data) == 0 else best_orientation_data,
+				best_place_column,
+				rotate_times
 			)
 
 	@staticmethod
 	def do_move(
 			board: StandardType.StandardBoard,
-			best_orientation: StandardType.StandardOrientation,
-			which_column: int) -> StandardType.StandardGameStateInfo:
+			best_orientation_data: StandardType.StandardOrientationData,
+			which_column: int) -> StandardType.StandardMoveStateInfo:
 		"""
 		Do a move
-		:param board: The AI board
-		:param best_orientation: All orientation info about this piece
+		:param board: The game board
+		:param best_orientation_data: The data of this piece in current orientation
 		:param which_column: Which column this action place
-		:return: A Sign contained all information we need
+		:return: what happened after this movement done
 		"""
-		best_orientation = AI.move_piece_horizontally(best_orientation, which_column)
-		current_landing_height = AI.get_placeable_row(board, best_orientation)
+		best_orientation_data = AI.move_piece_horizontally(best_orientation_data, which_column)
+		current_landing_height = AI.get_placeable_row(board, best_orientation_data)
 
-		if current_landing_height + len(best_orientation) > len(board):
-			return StandardType.StandardGameStateInfo()
+		if current_landing_height + len(best_orientation_data) > len(board):
+			return StandardType.StandardMoveStateInfo()
 
-		for i in range(len(best_orientation)):
-			board[current_landing_height + i] |= best_orientation[i]
+		for i in range(len(best_orientation_data)):
+			board[current_landing_height + i] |= best_orientation_data[i]
 
 		# Remove all full rows
 		i = 0
 		eliminated_rows = 0
-		while i < len(best_orientation):
+		while i < len(best_orientation_data):
 			if board[current_landing_height + i] == StandardType.StandardTetris.FULL_ROW_VALUE:
 				board.pop(current_landing_height + i)
 				# Add an empty row on top
@@ -102,34 +110,37 @@ class AI:
 			i += 1
 
 		return \
-			StandardType.StandardMoveStateInfo(current_landing_height, best_orientation, eliminated_rows)
+			StandardType.StandardMoveStateInfo(False, current_landing_height, best_orientation_data, eliminated_rows)
 
 	@staticmethod
 	def move_piece_horizontally(
-			orientation: StandardType.StandardOrientation,
-			which_column: int) -> StandardType.StandardOrientation:
+			orientation_data: StandardType.StandardOrientationData,
+			which_column: int) -> StandardType.StandardOrientationData:
 		"""
 		Move piece to the specified column
 		Just need left shift it
-		:param orientation: All orientation info about this piece
+		:param orientation_data: The data of this piece in current orientation
 		:param which_column: Which column to place
-		:return: New orientations after move
+		:return: New orientation_data after move
 		"""
-		return [(i << which_column) for i in orientation]
+		return [(i << which_column) for i in orientation_data]
 
 	@staticmethod
-	def get_placeable_row(board: StandardType.StandardBoard, orientation: StandardType.StandardOrientation) -> int:
+	def get_placeable_row(
+			board: StandardType.StandardBoard,
+			orientation_data: StandardType.StandardOrientationData
+	) -> int:
 		"""
 		Find which row current piece could place
-		:param board: The AI board
-		:param orientation: All orientation info about this piece
-		:return: The row we could place
+		:param board: The game board
+		:param orientation_data: The data of this piece in current orientation
+		:return: Which row we could place
 		"""
 		# Descend from top to find the highest row that will collide with the our piece.
-		for row in range(len(board) - len(orientation), -1, -1):
+		for row in range(len(board) - len(orientation_data), -1, -1):
 			# Check if piece collides with the cells of the current row.
-			for i in range(len(orientation)):
-				if (board[row + i] & orientation[i]) != 0:
+			for i in range(len(orientation_data)):
+				if (board[row + i] & orientation_data[i]) != 0:
 					# Found collision - place piece on row above.
 					return row + 1
 
@@ -142,8 +153,8 @@ class AI:
 			total_columns: int) -> float:
 		"""
 		Evaluate the board, giving a higher score to boards that "look" better.
-		:param move_info: see Game.Info
-		:param board: The AI board
+		:param move_info: What are the consequences of this move
+		:param board: The game board
 		:param total_columns: Number of columns in the board
 		:return: A number indicating how "good" a board is, the higher the number, the better the board.
 		"""
@@ -157,13 +168,13 @@ class AI:
 
 	@staticmethod
 	def __get_landing_height(move_info: StandardType.StandardMoveStateInfo) -> int:
-		return move_info.current_landing_height + (len(move_info.best_orientation) - 1) // 2
+		return move_info.current_landing_height + (len(move_info.best_orientation_data) - 1) // 2
 
 	@staticmethod
 	def __get_row_transitions(board: StandardType.StandardBoard, total_columns: int) -> int:
 		"""
 		A row transition occurs when an empty cell is adjacent to a filled cell on the same row and vice versa.
-		:param board: The AI board
+		:param board: The game board
 		:param total_columns: Number of columns in the board
 		:return: The total number of row transitions
 		"""
@@ -191,7 +202,7 @@ class AI:
 	def __get_column_transitions(board: StandardType.StandardBoard, total_columns: int) -> int:
 		"""
 		A column transition occurs when an empty cell is adjacent to a filled cell on the same row and vice versa.
-		:param board: The AI board
+		:param board: The game board
 		:param total_columns: Number of columns in the board
 		:return: The total number of column transitions
 		"""
@@ -214,7 +225,7 @@ class AI:
 	@staticmethod
 	def __get_number_of_holes(board: StandardType.StandardBoard, total_columns: int) -> int:
 		"""
-		:param board: The AI board
+		:param board: The game board
 		:param total_columns: Number of columns in the board
 		:return: The total number of holes
 		"""
@@ -239,7 +250,7 @@ class AI:
 		A well is a sequence of empty cells above the top piece in a column such
 		that the top cell in the sequence is surrounded (left and right) by occupied
 		cells or a boundary of the board.
-		:param board: The AI board
+		:param board: The game board
 		:param total_columns: Number of columns in the board
 		:return:
 			The well sums. For a well of length n, we define the well sums as
