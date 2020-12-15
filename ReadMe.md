@@ -29,6 +29,11 @@ if Islam retains its rights to the original project, the Copyright is
 
 Otherwise, the license of this project is the License file in the project
 
+## issues
+If it is not run in the IDE (mine is Pycharm), 
+it may become unresponsive or even crash 
+(it is reasonable, because we don't have to monitor any time, just simple while True)
+
 ## future
 ```text
 Allow AI to operate games built in any form.
