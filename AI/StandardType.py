@@ -5,7 +5,7 @@ StandardBoard = typing.List[int]
 StandardOrientationData = typing.List[int]
 
 
-class __StandardDataFormat:
+class StandardDataFormat:
 	# Standard data storage format for each piece used by our algorithm
 	def __init__(
 			self,
@@ -42,95 +42,7 @@ class __StandardDataFormat:
 
 
 # alias
-StandardPiece = typing.List[__StandardDataFormat]
-
-"""
-Some Example
-
-def bin_to_dec(binary: str) -> int:
-	return int(binary, 2)
-
-	I = [
-		#   O
-		#   O
-		#   O
-		#   O
-		__StandardDataFormat([1, 1, 1, 1], 1, 4),
-		# OOOO
-		__StandardDataFormat([bin_to_dec('1111')], 4, 1)
-	]
-	T = [
-		#  O
-		# OOO
-		__StandardDataFormat([bin_to_dec('010'), bin_to_dec('111')], 3, 2),
-		# O
-		# OO
-		# O
-		__StandardDataFormat([bin_to_dec('10'), bin_to_dec('11'), bin_to_dec('10')], 2, 3),
-		#  O
-		# OO
-		#  O
-		__StandardDataFormat([bin_to_dec('01'), bin_to_dec('11'), bin_to_dec('01')], 2, 3),
-		# OOO
-		#  O
-		__StandardDataFormat([bin_to_dec('111'), bin_to_dec('010')], 3, 2)
-	]
-	O = [
-		# OO
-		# OO
-		__StandardDataFormat([bin_to_dec('11'), bin_to_dec('11')], 2, 2)
-	]
-	J = [
-		# O
-		# OOO
-		__StandardDataFormat([bin_to_dec('100'), bin_to_dec('111')], 3, 2),
-		# OO
-		# O
-		# O
-		__StandardDataFormat([bin_to_dec('11'), bin_to_dec('10'), bin_to_dec('10')], 2, 3),
-		# OOO
-		#   O
-		__StandardDataFormat([bin_to_dec('111'), bin_to_dec('001')], 3, 2),
-		#  O
-		#  O
-		# OO
-		__StandardDataFormat([bin_to_dec('01'), bin_to_dec('01'), bin_to_dec('11')], 2, 3)
-	]
-	L = [
-		#   O
-		# OOO
-		__StandardDataFormat([bin_to_dec('001'), bin_to_dec('111')], 3, 2),
-		# O
-		# O
-		# OO
-		__StandardDataFormat([bin_to_dec('10'), bin_to_dec('10'), bin_to_dec('11')], 2, 3),
-		# OOO
-		# O
-		__StandardDataFormat([bin_to_dec('111'), bin_to_dec('100')], 3, 2),
-		# OO
-		#  O
-		#  O
-		__StandardDataFormat([bin_to_dec('11'), bin_to_dec('01'), bin_to_dec('01')], 2, 3)
-	]
-	S = [
-		#  OO
-		# OO
-		__StandardDataFormat([bin_to_dec('011'), bin_to_dec('110')], 3, 2),
-		# O
-		# OO
-		#  O
-		__StandardDataFormat([bin_to_dec('10'), bin_to_dec('11'), bin_to_dec('01')], 2, 3)
-	]
-	Z = [
-		# OO
-		#  OO
-		__StandardDataFormat([bin_to_dec('110'), bin_to_dec('011')], 3, 2),
-		#  O
-		# OO
-		# O
-		__StandardDataFormat([bin_to_dec('01'), bin_to_dec('11'), bin_to_dec('10')], 2, 3)
-	]
-"""
+StandardPiece = typing.List[StandardDataFormat]
 
 
 class StandardMoveStateInfo:

@@ -1,1 +1,0 @@
-### Build a suitable proxy interface to allow AI to operate games built in any form

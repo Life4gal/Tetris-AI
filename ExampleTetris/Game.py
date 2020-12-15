@@ -1,12 +1,10 @@
-"""
-This file is about the display of the Tetris Game
-"""
-
-import Src.AI as AI
-import Src.Piece as Piece
 import pygame
 import typing
 import random
+
+import AI.AI as AI
+import AI.StandardType as StandardType
+import ExampleTetris.Piece as Piece
 
 """
 You can customize the display by changing the following 5 variables
@@ -31,8 +29,10 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Tetris-AI")
 font = pygame.font.SysFont("Comic Sans MS", 60)
 
-# ai init
-ai = AI.AI(COLUMNS, ROWS)
+g_ai = AI.AI()
+g_tetris = StandardType.StandardTetris(COLUMNS, ROWS)
+g_ai.set_tetris(g_tetris)
+g_piece: Piece.Piece = ...
 
 
 def get_random_color() -> typing.Tuple[int, int, int]:
@@ -51,7 +51,7 @@ def draw_board() -> None:
 	screen.fill((0, 0, 0))
 	for row in range(ROWS):
 		column = 0
-		row_value = ai.tetris.board[row]
+		row_value = g_ai.tetris.board[row]
 		# after every action we replace all block, so if this row has no block
 		# we think the row above also are blank
 		if row_value == 0:
@@ -76,7 +76,7 @@ def draw_score() -> None:
 	Show current score
 	:return: None
 	"""
-	score = font.render(f"Score: {ai.total_row_removed}", True, get_random_color())
+	score = font.render(f"Score: {g_ai.scores}", True, get_random_color())
 	rect = score.get_rect()
 	rect.topleft = (SCREEN_WIDTH // 2 - rect.w // 2, (SCREEN_HEIGHT - BLOCK_SIZE * ROWS) // 2)
 	screen.blit(score, rect)
@@ -94,16 +94,16 @@ def draw_current_piece():
 	"""
 	height = (SCREEN_HEIGHT - BLOCK_SIZE * ROWS) // 2 + BLOCK_SIZE
 	# we just need the last character of name
-	name = font.render(f"Current Piece: {ai.current_piece.name[-1]}", True, get_random_color())
+	name = font.render(f"Current Piece: {g_piece.name[-1]}", True, get_random_color())
 	rect = name.get_rect()
 	rect.topleft = (SCREEN_WIDTH // 2 - rect.w // 2, height)
 	screen.blit(name, rect)
 
 	# use the first data for show
-	data: Piece.DataFormat = ai.current_piece.value[0]
+	data: StandardType.StandardDataFormat = g_piece.value[0]
 	height += rect.h
 	sx = SCREEN_WIDTH // 2 - (BLOCK_SIZE * data.width) // 2
-	for row in data.orientation:
+	for row in data.data:
 		column = 0
 		while column < data.width:
 			if row & 1:
@@ -120,7 +120,8 @@ def draw_current_piece():
 
 if __name__ == '__main__':
 	while True:
-		ai.play()
+		g_piece = Piece.Piece.get_random_piece()
+		_ = g_ai.play(g_piece.value)
 		draw_board()
 		draw_score()
 		draw_current_piece()

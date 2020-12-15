@@ -6,9 +6,9 @@
 ```shell
 # Run the AI
 # Linux
-python3 main.py
+python3 ExampleTetris/Game.py
 # Windows
-python main.py
+python main.pyExampleTetris/Game.py
 ```
 
 ### Requirement 
@@ -23,12 +23,6 @@ python main.py
 #### Linux: Pass
 #### Windows: Pass
 
-### License
-if Islam retains its rights to the original project, the Copyright is
-[Copyright Islam El-Ashi <islam@elashi.me>](https://github.com/ielashi/eltetris)
-
-Otherwise, the license of this project is the License file in the project
-
 ## issues
 If it is not run in the IDE (mine is Pycharm), 
 it may become unresponsive or even crash 
@@ -36,6 +30,8 @@ it may become unresponsive or even crash
 
 ## future
 ```text
-Allow AI to operate games built in any form.
-The game built by other language?
+1.A set of universal conversion proxy interface, 
+so that any implementation of Tetris can be converted into an AI-recognizable form
+2.Allow AI to operate games built in any form.
+3.The game built by other language?
 ```

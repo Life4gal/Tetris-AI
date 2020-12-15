@@ -1,10 +1,10 @@
-import StandardType
+import AI.StandardType as StandardType
 
 
 class AI:
 	def __init__(self):
-		self.__tetris: StandardType.StandardTetris = ...
-		self.__scores: int = 0
+		self.tetris: StandardType.StandardTetris = ...
+		self.scores: int = 0
 
 		self.__inited: bool = False
 
@@ -16,27 +16,27 @@ class AI:
 		:param tetris:
 		:return:
 		"""
-		self.__tetris = tetris
+		self.tetris = tetris
 		self.__inited = True
 
-	def get_scores(self) -> int:
-		return self.__scores
-
 	def play(self, current_piece: StandardType.StandardPiece) -> StandardType.StandardMoveStateInfo:
+		"""
+		Get a random piece, find how and where to place it
+		:param current_piece: The Piece
+		:return: See StandardType.StandardMoveStateInfo
+		"""
 		assert self.__inited, f"Error: You should init the AI first!"
 
-		pick: StandardType.StandardMoveEvaluatedInfo = self.pick_move(current_piece)
+		pick: StandardType.StandardMoveEvaluatedInfo = self.__pick_move(current_piece)
 		do_it: StandardType.StandardMoveStateInfo = \
-			AI.do_move(self.__tetris.board, pick.best_orientation, pick.best_place_column)
+			AI.__do_move(self.tetris.board, pick.best_orientation, pick.best_place_column)
 
 		if not do_it.is_game_over:
-			# if game not over, we can cast it to StandardMoveStateInfo safety
-			do_it.__class__ = StandardType.StandardMoveStateInfo
-			self.__scores += do_it.eliminated_rows
+			self.scores += do_it.eliminated_rows
 
 		return do_it
 
-	def pick_move(self, current_piece: StandardType.StandardPiece) -> StandardType.StandardMoveEvaluatedInfo:
+	def __pick_move(self, current_piece: StandardType.StandardPiece) -> StandardType.StandardMoveEvaluatedInfo:
 		"""
 		Pick the best move possible (orientation and location) as determined by the evaluation function.
 		Given a tetris piece, tries all possible orientations
@@ -54,13 +54,13 @@ class AI:
 			orientation_data = this_shape.data
 
 			# Evaluate all possible columns
-			for column in range(self.__tetris.number_of_columns - this_shape.width + 1):
+			for column in range(self.tetris.number_of_columns - this_shape.width + 1):
 				# Copy current board
-				board = self.__tetris.board.copy()
-				move_info: StandardType.StandardMoveStateInfo = AI.do_move(board, orientation_data, column)
+				board = self.tetris.board.copy()
+				move_info: StandardType.StandardMoveStateInfo = AI.__do_move(board, orientation_data, column)
 
 				if not move_info.is_game_over:
-					evaluation = AI.evaluate_board_coefficient(move_info, board, self.__tetris.number_of_columns)
+					evaluation = AI.__evaluate_board_coefficient(move_info, board, self.tetris.number_of_columns)
 
 					if evaluation > best_evaluation:
 						best_evaluation = evaluation
@@ -69,14 +69,14 @@ class AI:
 
 						rotate_times = index
 
-			return StandardType.StandardMoveEvaluatedInfo(
-				current_piece[0] if len(best_orientation_data) == 0 else best_orientation_data,
-				best_place_column,
-				rotate_times
-			)
+		return StandardType.StandardMoveEvaluatedInfo(
+			current_piece[0] if len(best_orientation_data) == 0 else best_orientation_data,
+			best_place_column,
+			rotate_times
+		)
 
 	@staticmethod
-	def do_move(
+	def __do_move(
 			board: StandardType.StandardBoard,
 			best_orientation_data: StandardType.StandardOrientationData,
 			which_column: int) -> StandardType.StandardMoveStateInfo:
@@ -87,8 +87,8 @@ class AI:
 		:param which_column: Which column this action place
 		:return: what happened after this movement done
 		"""
-		best_orientation_data = AI.move_piece_horizontally(best_orientation_data, which_column)
-		current_landing_height = AI.get_placeable_row(board, best_orientation_data)
+		best_orientation_data = AI.__move_piece_horizontally(best_orientation_data, which_column)
+		current_landing_height = AI.__get_placeable_row(board, best_orientation_data)
 
 		if current_landing_height + len(best_orientation_data) > len(board):
 			return StandardType.StandardMoveStateInfo()
@@ -113,7 +113,7 @@ class AI:
 			StandardType.StandardMoveStateInfo(False, current_landing_height, best_orientation_data, eliminated_rows)
 
 	@staticmethod
-	def move_piece_horizontally(
+	def __move_piece_horizontally(
 			orientation_data: StandardType.StandardOrientationData,
 			which_column: int) -> StandardType.StandardOrientationData:
 		"""
@@ -126,7 +126,7 @@ class AI:
 		return [(i << which_column) for i in orientation_data]
 
 	@staticmethod
-	def get_placeable_row(
+	def __get_placeable_row(
 			board: StandardType.StandardBoard,
 			orientation_data: StandardType.StandardOrientationData
 	) -> int:
@@ -147,7 +147,7 @@ class AI:
 		return 0  # No collision found, piece should be placed on first row.
 
 	@staticmethod
-	def evaluate_board_coefficient(
+	def __evaluate_board_coefficient(
 			move_info: StandardType.StandardMoveStateInfo,
 			board: StandardType.StandardBoard,
 			total_columns: int) -> float:
