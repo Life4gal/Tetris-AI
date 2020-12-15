@@ -29,4 +29,8 @@ if Islam retains its rights to the original project, the Copyright is
 
 Otherwise, the license of this project is the License file in the project
 
-## if you have any questions, just ask me
+## future
+```text
+Allow AI to operate games built in any form.
+The game built by other language?
+```
